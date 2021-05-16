@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IIIF Content State Base64 Url Encoding</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+<h1>base64url encoding</h1>
+
+<form>
+
+    <select>
+        <option value="0"></option>
+    </select>
+
+    <div class="wrapper">
+        <div>
+            <p>Client plaintext</p>
+            <textarea name="client-plain" id="clientPlain"></textarea>
+        </div>
+        <div class="command">
+            <button id="clientEncode">Encode &#8658;</button>
+            <button id="clientDecode">Decode &#8656;</button>
+        </div>
+        <div>
+            <p>Client encoded</p>
+            <textarea name="client-encoded" id="clientEncoded"></textarea>
+        </div>
+
+        <div class="middle"></div>
+        <div class="command">
+            <button id="clientServerEncode">Encode &#8659; &#8664;</button>
+            <button id="serverClientDecode">Decode &#8662; &#8657;</button>
+        </div>
+        <div class="middle"></div>
+
+        <div>
+            <p>Server plaintext</p>
+            <textarea name="server-plain" id="serverPlain"></textarea>
+        </div>
+        <div class="command">
+            <button id="serverEncode">Encode &#8658;</button>
+            <button id="serverDecode">Decode &#8656;</button>
+        </div>
+        <div>
+            <p>Server encoded</p>
+            <textarea name="server-encoded" id="serverEncoded"></textarea>
+        </div>
+    </div>
+
+</form>
+
+<p>Demonstrate that:</p>
+<ul>
+    <li>A content state received on the querystring can be decoded by the client</li>
+    <li>A content state received on the querystring can be decoded by the server</li>
+</ul>
+
+<script src="{{ url_for('static', filename='base64url.js') }}"></script>
+<script>
+
+    function getIIIFContent() {
+        let rg = new RegExp("iiif-content=([^\\&]*)", "g");
+        let m = rg.exec(window.location.search);
+        if (m && m[1]) {
+            return m[1];
+        }
+        return null;
+    }
+
+    function $(id){
+        // to make this a bit easier to read
+        return document.getElementById(id);
+    }
+
+    let iiifContent = getIIIFContent();
+    if(iiifContent){
+        //$("clientEncoded").value = iiifContent;
+        $("clientPlain").value = decode(iiifContent);
+    }
+    
+    
+    $("clientEncode").addEventListener("click", clientEncode);
+    $("clientDecode").addEventListener("click", clientDecode);
+    $("serverEncode").addEventListener("click", serverEncode);
+    $("serverDecode").addEventListener("click", serverDecode);
+    
+
+
+    function clientEncode(e){
+        e.preventDefault();
+        $("clientEncoded").value = encode($("clientPlain").value);
+    }
+
+    function clientDecode(e){
+        e.preventDefault();
+        $("clientPlain").value = decode($("clientEncoded").value);
+    }
+
+    function serverEncode(e){
+        e.preventDefault();
+
+    }
+
+    function serverDecode(e){
+        e.preventDefault();
+
+    }
+
+
+</script>
+
+<textarea class="sample" id="sample_0">
+
+</textarea>
+
+<textarea class="sample" id="sample_1">
+
+</textarea>
+
+<textarea class="sample" id="sample_2">
+
+</textarea>
+
+</body>
+</html>

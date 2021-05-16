@@ -1,0 +1,45 @@
+.wrapper {
+    display: grid;
+    grid-template-columns: 3fr 1fr 3fr;
+}
+
+.wrapper > div {
+    /* border: 1px solid gray;
+    border-radius: 5px;*/
+    padding: 1em;
+    margin: 1em;
+}
+
+.wrapper > div p {
+    margin: 0.1em;
+}
+
+.wrapper > div.middle {
+    /* border: 1px solid gray;
+    border-radius: 5px;*/
+    padding: 0;
+    margin: 0;
+}
+
+.command {
+    display: flex;
+    justify-content: center;
+    align-items:flex-end;
+}
+
+.command button {
+    font-size: x-large;
+    width: 100%;
+    margin: 0.5em;
+    min-height: 3em;
+    max-height: 6em;
+}
+
+textarea {
+    width: 98%;
+    height: 10em;
+}
+
+textarea.sample {
+    display: none;
+}
