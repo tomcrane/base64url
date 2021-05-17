@@ -4,17 +4,17 @@
 // and
 // https://stackoverflow.com/a/51838635
 
-function encode(plainContentState) {
-    let binary = toBinary(plainContentState);
-    let base64 = btoa(binary);
+function encode(plainContentState, supportUnicode) {
+    let safeString = supportUnicode ? toBinary(plainContentState) : plainContentState;
+    let base64 = btoa(safeString);
     let base64url = base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
     return base64url;
 }
 
-function decode(base64ContentState) {
+function decode(base64ContentState, supportUnicode) {
     let base64 = replaceCharsAndPad(base64ContentState);
-    let binary = atob(base64);
-    let plainText = fromBinary(binary);
+    let decoded = atob(base64);
+    let plainText = supportUnicode ? fromBinary(decoded) : decoded;
     return plainText;
 }
 

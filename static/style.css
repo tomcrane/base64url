@@ -43,3 +43,8 @@ textarea {
 textarea.sample {
     display: none;
 }
+
+.error {
+    color: darkred;
+}
+

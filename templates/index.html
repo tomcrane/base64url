@@ -12,16 +12,13 @@
 
 <h1>base64url encoding</h1>
 
-<form>
+<form method="post" id="theForm">
 
-    <select>
-        <option value="0"></option>
-    </select>
-
+    <input type="checkbox" name="chk-unicode" id="chkUnicode" {{ checked }} /><label for="chkUnicode">Make Javascript Unicode-safe</label>
     <div class="wrapper">
         <div>
             <p>Client plaintext</p>
-            <textarea name="client-plain" id="clientPlain"></textarea>
+            <textarea name="client-plain" id="clientPlain">{{ client_plain }}</textarea>
         </div>
         <div class="command">
             <button id="clientEncode">Encode &#8658;</button>
@@ -29,19 +26,23 @@
         </div>
         <div>
             <p>Client encoded</p>
-            <textarea name="client-encoded" id="clientEncoded"></textarea>
+            <textarea name="client-encoded" id="clientEncoded">{{ client_encoded }}</textarea>
         </div>
 
-        <div class="middle"></div>
+        <div class="middle">
+            <p class="error" id="encodeError">{{ encode_error }}</p>
+        </div>
         <div class="command">
             <button id="clientServerEncode">Encode &#8659; &#8664;</button>
             <button id="serverClientDecode">Decode &#8662; &#8657;</button>
         </div>
-        <div class="middle"></div>
+        <div class="middle">
+            <p class="error" id="decodeError">{{ decode_error }}</p>
+        </div>
 
         <div>
             <p>Server plaintext</p>
-            <textarea name="server-plain" id="serverPlain"></textarea>
+            <textarea name="server-plain" id="serverPlain">{{ server_plain }}</textarea>
         </div>
         <div class="command">
             <button id="serverEncode">Encode &#8658;</button>
@@ -49,17 +50,13 @@
         </div>
         <div>
             <p>Server encoded</p>
-            <textarea name="server-encoded" id="serverEncoded"></textarea>
+            <textarea name="server-encoded" id="serverEncoded">{{ server_encoded }}</textarea>
         </div>
     </div>
-
+    <input type="hidden" name="operation" id="op" />
+    <input type="hidden" name="postOperation" id="postOp" value="{{ operation }}" />
 </form>
 
-<p>Demonstrate that:</p>
-<ul>
-    <li>A content state received on the querystring can be decoded by the client</li>
-    <li>A content state received on the querystring can be decoded by the server</li>
-</ul>
 
 <script src="{{ url_for('static', filename='base64url.js') }}"></script>
 <script>
@@ -80,52 +77,91 @@
 
     let iiifContent = getIIIFContent();
     if(iiifContent){
-        //$("clientEncoded").value = iiifContent;
-        $("clientPlain").value = decode(iiifContent);
+        try {
+            $("clientPlain").value = decode(iiifContent);
+        } catch (err) {
+            $("decodeError").innerText = "[CLIENT] " + err;
+        }
     }
-    
-    
+
     $("clientEncode").addEventListener("click", clientEncode);
     $("clientDecode").addEventListener("click", clientDecode);
+    $("clientServerEncode").addEventListener("click", clientServerEncode);
+    $("serverClientDecode").addEventListener("click", serverClientDecode);
     $("serverEncode").addEventListener("click", serverEncode);
     $("serverDecode").addEventListener("click", serverDecode);
-    
 
 
     function clientEncode(e){
+        // entirely on the client
         e.preventDefault();
-        $("clientEncoded").value = encode($("clientPlain").value);
+        try {
+            $("clientEncoded").value = encode($("clientPlain").value, $("chkUnicode").checked);
+        } catch (err) {
+            $("encodeError").innerText = "[CLIENT] " + err;
+        }
     }
 
     function clientDecode(e){
+        // entirely on the client
         e.preventDefault();
-        $("clientPlain").value = decode($("clientEncoded").value);
+        try {
+            $("clientPlain").value = decode($("clientEncoded").value, $("chkUnicode").checked);
+        } catch (err) {
+            $("decodeError").innerText = "[CLIENT] " + err;
+        }
+    }
+
+    function clientServerEncode(e){
+        // send to server but then decode the result once back on the client
+        e.preventDefault();
+        $("op").value = "clientServerEncode";
+        $("theForm").submit();
+        // will attempt to decode on the client AFTER result from server
+    }
+
+    function serverClientDecode(e){
+        // send to server but then re-encode the result once back on the client, for comparison
+        e.preventDefault();
+        $("op").value = "serverClientDecode";
+        $("theForm").submit();
+        // will attempt to encode on the client AFTER result from server
     }
 
     function serverEncode(e){
+        // entirely on the server
         e.preventDefault();
-
+        $("op").value = "serverEncode";
+        $("theForm").submit();
     }
 
     function serverDecode(e){
+        // entirely on the server
         e.preventDefault();
+        $("op").value = "serverDecode";
+        $("theForm").submit();
+    }
 
+    let postOp = $("postOp").value;
+    if(postOp == "clientServerEncode"){
+        try {
+            $("clientEncoded").value = encode($("clientPlain").value, $("chkUnicode").checked);
+        } catch (err) {
+            // add to server error
+            $("encodeError").innerHtml = $("encodeError").innerHtml + "<br/>[CLIENT] " + err;
+        }
+    }
+    if(postOp == "serverClientDecode"){
+        try {
+            $("clientPlain").value = decode($("serverEncoded").value, $("chkUnicode").checked);
+        } catch (err) {
+            // add to server error
+            $("decodeError").innerHtml = $("decodeError").innerHtml + "<br/>[CLIENT] " + err;
+        }
     }
 
 
 </script>
-
-<textarea class="sample" id="sample_0">
-
-</textarea>
-
-<textarea class="sample" id="sample_1">
-
-</textarea>
-
-<textarea class="sample" id="sample_2">
-
-</textarea>
 
 </body>
 </html>
