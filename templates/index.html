@@ -14,7 +14,10 @@
 
 <form method="post" id="theForm">
 
-    <input type="checkbox" name="chk-unicode" id="chkUnicode" {{ checked }} /><label for="chkUnicode">Make Javascript Unicode-safe</label>
+    <input type="radio" name="encoding" value="simple" id="rbSimple" {{ radios['simple'] }} /><label for="rbSimple">Simple JavaScript encoding</label> <br/>
+    <input type="radio" name="encoding" value="unicode"  id="rbUnicode" {{ radios['unicode'] }} /><label for="rbUnicode">Unicode JavaScript encoding</label> <br/>
+    <input type="radio" name="encoding" value="encodeuri" id="rbEncodeURI" {{ radios['encodeuri'] }} /><label for="rbEncodeURI">encodeURI JavaScript encoding</label> <br/>
+
     <div class="wrapper">
         <div>
             <p>Client plaintext</p>
@@ -84,6 +87,32 @@
         }
     }
 
+    // Wire up the simple versions to the encode and decode functions by default
+    let encode = encodeSimple;
+    let decode = decodeSimple;
+
+    let encodingButtons = document.querySelectorAll('input[type=radio][name="encoding"]');
+    encodingButtons.forEach(rb => rb.addEventListener('change', () => {
+        switch ($('theForm').elements.encodings.value){
+            case "simple":
+                encode = encodeSimple;
+                decode = decodeSimple;
+                break;
+            case "unicode":
+                encode = encodeBinary;
+                decode = decodeBinary;
+                break;
+            case "encodeuri":
+                encode = encodeUriEncode;
+                decode = decodeUriEncode;
+                break;
+            default:
+                encode = encodeSimple;
+                decode = decodeSimple;
+                break;
+        }
+    }));
+
     $("clientEncode").addEventListener("click", clientEncode);
     $("clientDecode").addEventListener("click", clientDecode);
     $("clientServerEncode").addEventListener("click", clientServerEncode);
@@ -96,7 +125,7 @@
         // entirely on the client
         e.preventDefault();
         try {
-            $("clientEncoded").value = encode($("clientPlain").value, $("chkUnicode").checked);
+            $("clientEncoded").value = encode($("clientPlain").value);
         } catch (err) {
             $("encodeError").innerText = "[CLIENT] " + err;
         }
@@ -106,7 +135,7 @@
         // entirely on the client
         e.preventDefault();
         try {
-            $("clientPlain").value = decode($("clientEncoded").value, $("chkUnicode").checked);
+            $("clientPlain").value = decode($("clientEncoded").value);
         } catch (err) {
             $("decodeError").innerText = "[CLIENT] " + err;
         }
@@ -145,7 +174,7 @@
     let postOp = $("postOp").value;
     if(postOp == "clientServerEncode"){
         try {
-            $("clientEncoded").value = encode($("clientPlain").value, $("chkUnicode").checked);
+            $("clientEncoded").value = encode($("clientPlain").value);
         } catch (err) {
             // add to server error
             $("encodeError").innerHtml = $("encodeError").innerHtml + "<br/>[CLIENT] " + err;
@@ -153,7 +182,7 @@
     }
     if(postOp == "serverClientDecode"){
         try {
-            $("clientPlain").value = decode($("serverEncoded").value, $("chkUnicode").checked);
+            $("clientPlain").value = decode($("serverEncoded").value);
         } catch (err) {
             // add to server error
             $("decodeError").innerHtml = $("decodeError").innerHtml + "<br/>[CLIENT] " + err;
