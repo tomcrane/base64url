@@ -18,6 +18,7 @@
     <input type="radio" name="encoding" value="unicode"  id="rbUnicode" {{ radios['unicode'] }} /><label for="rbUnicode">Unicode JavaScript encoding</label> <br/>
     <input type="radio" name="encoding" value="encodeuri" id="rbEncodeURI" {{ radios['encodeuri'] }} /><label for="rbEncodeURI">encodeURI JavaScript encoding</label> <br/>
 
+    <input type="checkbox" name="no-padding" id="chkNoPadding" value="no-padding" {{ chk_no_padding }} /><label for="chkNoPadding">No padding</label>
     <div class="wrapper">
         <div>
             <p>Client plaintext</p>
@@ -64,6 +65,11 @@
 <script src="{{ url_for('static', filename='base64url.js') }}"></script>
 <script>
 
+    function $(id){
+        // to make this a bit easier to read
+        return document.getElementById(id);
+    }
+
     function getIIIFContent() {
         let rg = new RegExp("iiif-content=([^\\&]*)", "g");
         let m = rg.exec(window.location.search);
@@ -73,27 +79,8 @@
         return null;
     }
 
-    function $(id){
-        // to make this a bit easier to read
-        return document.getElementById(id);
-    }
-
-    let iiifContent = getIIIFContent();
-    if(iiifContent){
-        try {
-            $("clientPlain").value = decode(iiifContent);
-        } catch (err) {
-            $("decodeError").innerText = "[CLIENT] " + err;
-        }
-    }
-
-    // Wire up the simple versions to the encode and decode functions by default
-    let encode = encodeSimple;
-    let decode = decodeSimple;
-
-    let encodingButtons = document.querySelectorAll('input[type=radio][name="encoding"]');
-    encodingButtons.forEach(rb => rb.addEventListener('change', () => {
-        switch ($('theForm').elements.encodings.value){
+    function assignEncodingFunction() {
+        switch ($('theForm').elements.encoding.value){
             case "simple":
                 encode = encodeSimple;
                 decode = decodeSimple;
@@ -109,9 +96,23 @@
             default:
                 encode = encodeSimple;
                 decode = decodeSimple;
+                $('rbSimple').checked = "checked"; // nothing was checked
                 break;
         }
-    }));
+    }
+
+    assignEncodingFunction();
+    let encodingButtons = document.querySelectorAll('input[type=radio][name="encoding"]');
+    encodingButtons.forEach(rb => rb.addEventListener('change', assignEncodingFunction));
+
+    let iiifContent = getIIIFContent();
+    if(iiifContent){
+        try {
+            $("clientPlain").value = decode(iiifContent);
+        } catch (err) {
+            $("decodeError").innerText = "[CLIENT] " + err;
+        }
+    }
 
     $("clientEncode").addEventListener("click", clientEncode);
     $("clientDecode").addEventListener("click", clientDecode);
@@ -120,12 +121,11 @@
     $("serverEncode").addEventListener("click", serverEncode);
     $("serverDecode").addEventListener("click", serverDecode);
 
-
     function clientEncode(e){
         // entirely on the client
         e.preventDefault();
         try {
-            $("clientEncoded").value = encode($("clientPlain").value);
+            $("clientEncoded").value = encode($("clientPlain").value, $('chkNoPadding').checked);
         } catch (err) {
             $("encodeError").innerText = "[CLIENT] " + err;
         }
@@ -135,7 +135,7 @@
         // entirely on the client
         e.preventDefault();
         try {
-            $("clientPlain").value = decode($("clientEncoded").value);
+            $("clientPlain").value = decode($("clientEncoded").value, $('chkNoPadding').checked);
         } catch (err) {
             $("decodeError").innerText = "[CLIENT] " + err;
         }
@@ -174,7 +174,7 @@
     let postOp = $("postOp").value;
     if(postOp == "clientServerEncode"){
         try {
-            $("clientEncoded").value = encode($("clientPlain").value);
+            $("clientEncoded").value = encode($("clientPlain").value, $('chkNoPadding').checked);
         } catch (err) {
             // add to server error
             $("encodeError").innerHtml = $("encodeError").innerHtml + "<br/>[CLIENT] " + err;
@@ -182,7 +182,7 @@
     }
     if(postOp == "serverClientDecode"){
         try {
-            $("clientPlain").value = decode($("serverEncoded").value);
+            $("clientPlain").value = decode($("serverEncoded").value, $('chkNoPadding').checked);
         } catch (err) {
             // add to server error
             $("decodeError").innerHtml = $("decodeError").innerHtml + "<br/>[CLIENT] " + err;
