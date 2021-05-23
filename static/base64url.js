@@ -37,7 +37,6 @@ function decodeBinary(base64url, noPadding) {
 // https://thisthat.dev/encode-uri-vs-encode-uri-component/
 function encodeUriEncode(plainContentState, noPadding) {
     let uriEncoded = encodeURI(plainContentState);
-    console.log(uriEncoded)
     let base64 = btoa(uriEncoded);
     let base64url = base64ToBase64url(base64);
     if(noPadding) base64url = removePadding(base64url);
@@ -74,25 +73,6 @@ function restorePadding(s) {
     }
     return s;
 }
-
-
-// function replaceCharsToBase64url(base64) {
-//     return base64.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
-// }
-
-// function replaceCharsAndPadFromBase64url(base64url) {
-//     // Replace non-url compatible chars with base64 standard chars
-//     let s = base64url.replace(/-/g, '+').replace(/_/g, '/');
-//     // Pad out with standard base64 required padding characters
-//     let pad = s.length % 4;
-//     if (pad) {
-//         if (pad === 1) {
-//             throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
-//         }
-//         s += new Array(5 - pad).join('=');
-//     }
-//     return s;
-// }
 
 // convert a Unicode string to a string in which
 // each 16-bit unit occupies only one byte

@@ -119,7 +119,6 @@ def decode_normal_utf8(content_state, no_padding):
 
 def encode_uri(plain_text, no_padding):
     quoted = urllib.parse.quote(plain_text, safe=',/?:@&=+$#')
-    print(f"QUOTED: {quoted}")
     binary = quoted.encode("UTF-8")
     base64url = base64.urlsafe_b64encode(binary)  # this is bytes
     utf8_decoded = base64url.decode("UTF-8")
