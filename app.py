@@ -16,7 +16,9 @@ def index():
     encode_error = ""
     decode_error = ""
     operation = request.form.get("operation")
-    no_padding = request.form.get("no-padding", None) is not None
+    no_padding = True
+    if request.form.get("submitCheck", None) == "submitted":
+        no_padding = request.form.get("no-padding", None) is not None
 
     iiif_content = request.args.get("iiif-content")
 
@@ -27,7 +29,7 @@ def index():
     }
     encoding = request.form.get("encoding")
     if not encoding:
-        encoding = "simple"
+        encoding = "encodeuri"  # Content State 0.9
     radios[encoding] = "checked"
 
     if iiif_content is not None:
