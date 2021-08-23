@@ -12,19 +12,24 @@
 
 <h1>base64url encoding for IIIF Content State</h1>
 
+<p>This demo shows the <a href="https://iiif.io/api/content-state/0.9/#231-content-state-encoding">proposed mechanism</a>
+    for encoding a content state when sent as a request parameter. But can it be simpler? Shorter? Safer? What have we missed? Are there better ways?
+    <br/>Try out some strings below to experiment.</p>
+
 <p><a href="https://tom-crane.medium.com/what-is-iiif-content-state-dd15a543939f">What is IIIF Content State?</a>
     |
     <a href="https://iiif.io/api/content-state/">Content State Specification</a>
     |
-    <a href="https://github.com/tomcrane/base64url">This experiment on GitHub</a></p>
+    <a href="https://github.com/tomcrane/base64url">Source code for this experiment on GitHub</a></p>
+
 
 <form method="post" id="theForm">
 
     <input type="radio" name="encoding" value="simple" id="rbSimple" {{ radios['simple'] }} /><label for="rbSimple">Simple JavaScript encoding</label> <br/>
     <input type="radio" name="encoding" value="unicode"  id="rbUnicode" {{ radios['unicode'] }} /><label for="rbUnicode">Unicode JavaScript encoding</label><br/>
-    <input type="radio" name="encoding" value="encodeuri" id="rbEncodeURI" {{ radios['encodeuri'] }} /><label for="rbEncodeURI">encodeURI JavaScript encoding</label> (Content state 0.9)<br/>
+    <input type="radio" name="encoding" value="encodeuri" id="rbEncodeURI" {{ radios['encodeuri'] }} /><label for="rbEncodeURI">encodeURI JavaScript encoding</label> (Content State 0.9)<br/>
 
-    <input type="checkbox" name="no-padding" id="chkNoPadding" value="no-padding" {{ chk_no_padding }} /><label for="chkNoPadding">No padding</label> (Content state 0.9)
+    <input type="checkbox" name="no-padding" id="chkNoPadding" value="no-padding" {{ chk_no_padding }} /><label for="chkNoPadding">No padding</label> (Content State 0.9)
     <input type='hidden' value='submitted' name='submitCheck'>
     <div class="wrapper">
         <div>
