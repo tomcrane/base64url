@@ -147,12 +147,13 @@ def remove_padding(s):
 
 
 def restore_padding(s):
+    # The length of the restored string must be a multiple of 4
     pad = len(s) % 4
     padding = ""
     if pad:
         if pad == 1:
             raise Exception("InvalidLengthError: Input base64url string is the wrong length to determine padding")
-        padding = "=" * (5 - pad)
+        padding = "=" * (4 - pad)
     return s + padding
 
 
