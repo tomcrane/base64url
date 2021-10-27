@@ -32,22 +32,36 @@ function decodeBinary(base64url, noPadding) {
     return fromBinary(decoded);
 }
 
-// This is deliberately encodeURI rather than encodeURIComponent.
-// This is slightly more compact if we are going to base64 anyway.
+// Now using xxURIComponent
 // https://thisthat.dev/encode-uri-vs-encode-uri-component/
-function encodeUriEncode(plainContentState, noPadding) {
-    let uriEncoded = encodeURI(plainContentState);
+function encodeUriComponentEncode(plainContentState, noPadding) {
+    console.log("Encoding URIComponent " + plainContentState);
+    let uriEncoded = encodeURIComponent(plainContentState);
+    console.log("uriEncoded: " + uriEncoded);
     let base64 = btoa(uriEncoded);
+    console.log("base64: " + base64);
     let base64url = base64ToBase64url(base64);
-    if(noPadding) base64url = removePadding(base64url);
+    console.log("base64url: " + base64url);
+    if(noPadding) {
+        base64url = removePadding(base64url);
+        console.log("no padding: " + base64url);
+    }
     return base64url;
 }
 
-function decodeUriEncode(base64url, noPadding) {
-    if(noPadding) base64url = restorePadding(base64url);
+function decodeUriComponentEncode(base64url, noPadding) {
+    console.log("Decoding URIComponent " + base64url);
+    if(noPadding) {
+        base64url = restorePadding(base64url);
+        console.log("restored padding: " + base64url);
+    }
     let base64 = base64urlToBase64(base64url);
-    let decoded = atob(base64);
-    return decodeURI(decoded);
+    console.log("base64: " + base64);
+    let decodedAtob = atob(base64);
+    console.log("atob decoded: " + decodedAtob);
+    let uriComponentDecoded = decodeURIComponent(decodedAtob);
+    console.log(uriComponentDecoded);
+    return uriComponentDecoded;
 }
 
 function base64ToBase64url(base64) {
@@ -70,7 +84,7 @@ function restorePadding(s) {
         if (pad === 1) {
             throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
         }
-        s += new Array(4 - pad).join('=');
+        s += new Array(5 - pad).join('=');
     }
     return s;
 }

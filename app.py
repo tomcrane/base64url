@@ -85,7 +85,7 @@ def encode(plain_text, method, no_padding):
         # going to do exactly the same here to demonstrate the problem
         return encode_normal_utf8(plain_text, no_padding)
     elif method == "encodeuri":
-        return encode_uri(plain_text, no_padding)
+        return encode_uricomponent(plain_text, no_padding)
     else:
         raise Exception("Unknown encoding option " + method)
 
@@ -97,7 +97,7 @@ def decode(content_state, method, no_padding):
         # going to do exactly the same here to demonstrate the problem
         return decode_normal_utf8(content_state, no_padding)
     elif method == "encodeuri":
-        return decode_uri(content_state, no_padding)
+        return decode_uricomponent(content_state, no_padding)
     else:
         raise Exception("Unknown encoding option " + method)
 
@@ -119,8 +119,8 @@ def decode_normal_utf8(content_state, no_padding):
     return plain_text
 
 
-def encode_uri(plain_text, no_padding):
-    quoted = urllib.parse.quote(plain_text, safe=',/?:@&=+$#')
+def encode_uricomponent(plain_text, no_padding):
+    quoted = urllib.parse.quote(plain_text)  #, safe=',/?:@&=+$#')
     binary = quoted.encode("UTF-8")
     base64url = base64.urlsafe_b64encode(binary)  # this is bytes
     utf8_decoded = base64url.decode("UTF-8")
@@ -129,7 +129,7 @@ def encode_uri(plain_text, no_padding):
     return utf8_decoded
 
 
-def decode_uri(content_state, no_padding):
+def decode_uricomponent(content_state, no_padding):
     if no_padding:
         content_state = restore_padding(content_state)
     binary = base64.urlsafe_b64decode(content_state)
