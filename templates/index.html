@@ -27,7 +27,7 @@
 
     <input type="radio" name="encoding" value="simple" id="rbSimple" {{ radios['simple'] }} /><label for="rbSimple">Simple JavaScript encoding</label> <br/>
     <input type="radio" name="encoding" value="unicode"  id="rbUnicode" {{ radios['unicode'] }} /><label for="rbUnicode">Unicode JavaScript encoding</label><br/>
-    <input type="radio" name="encoding" value="encodeuri" id="rbEncodeURI" {{ radios['encodeuri'] }} /><label for="rbEncodeURI">encodeURI JavaScript encoding</label> (Content State 0.9)<br/>
+    <input type="radio" name="encoding" value="encodeuri" id="rbEncodeURI" {{ radios['encodeuri'] }} /><label for="rbEncodeURI">encodeURIComponent JavaScript encoding</label> (Content State 0.9)<br/>
 
     <input type="checkbox" name="no-padding" id="chkNoPadding" value="no-padding" {{ chk_no_padding }} /><label for="chkNoPadding">No padding</label> (Content State 0.9)
     <input type='hidden' value='submitted' name='submitCheck'>
@@ -102,8 +102,8 @@
                 decode = decodeBinary;
                 break;
             case "encodeuri":
-                encode = encodeUriEncode;
-                decode = decodeUriEncode;
+                encode = encodeUriComponentEncode;
+                decode = decodeUriComponentEncode;
                 break;
             default:
                 encode = encodeSimple;
