@@ -120,12 +120,18 @@ def decode_normal_utf8(content_state, no_padding):
 
 
 def encode_uricomponent(plain_text, no_padding):
-    quoted = urllib.parse.quote(plain_text)  #, safe=',/?:@&=+$#')
+    print(f"Encoding URIComponent {plain_text}")
+    quoted = urllib.parse.quote(plain_text, safe='')  # safe=',/?:@&=+$#')
+    print(f"quoted: {quoted}")
     binary = quoted.encode("UTF-8")
+    print(f"binary: {binary}")
     base64url = base64.urlsafe_b64encode(binary)  # this is bytes
+    print(f"base64url: {base64url}")
     utf8_decoded = base64url.decode("UTF-8")
+    print(f"utf8_decoded: {utf8_decoded}")
     if no_padding:
         utf8_decoded = remove_padding(utf8_decoded)
+        print(f"unpadded: {utf8_decoded}")
     return utf8_decoded
 
 
