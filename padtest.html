@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Padding test - js</title>
+</head>
+<body>
+
+<h2>Padding test</h2>
+<div id="output">
+
+</div>
+
+
+<script>
+
+    function restorePadding(s) {
+        // The length of the restored string must be a multiple of 4
+        let pad = s.length % 4;
+        if (pad) {
+            if (pad === 1) {
+                throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
+            }
+            s += new Array(5 - pad).join('=');
+        }
+        return s;
+    }
+
+    // Examples from https://datatracker.ietf.org/doc/html/rfc4648#section-10
+    let map = new Map();
+    map.set("", "");
+    map.set("Zg", "==");
+    map.set("Zm8", "=");
+    map.set("Zm9v", "");
+    map.set("Zm9vYg", "==");
+    map.set("Zm9vYmE", "=");
+    map.set("Zm9vYmFy", "");
+    for (const [unpadded, padding] of map) {
+        let padded = unpadded + padding;
+        let restored = restorePadding(unpadded);
+        let result = (padded == restored) ? "SUCCESS" : "FAILURE";
+        let message = `<p>Expecting ${unpadded} to restore to ${padded}, got ${restored}: ${result}</p>`;
+        document.getElementById("output").insertAdjacentHTML('beforeend', message);
+
+    }
+</script>
+</body>
+</html>
