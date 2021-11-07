@@ -15,19 +15,8 @@
 </div>
 
 
+<script src="static/base64url.js"></script>
 <script>
-
-    function restorePadding(s) {
-        // The length of the restored string must be a multiple of 4
-        let pad = s.length % 4;
-        if (pad) {
-            if (pad === 1) {
-                throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
-            }
-            s += new Array(5 - pad).join('=');
-        }
-        return s;
-    }
 
     // Examples from https://datatracker.ietf.org/doc/html/rfc4648#section-10
     let map = new Map();
