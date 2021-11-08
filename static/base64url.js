@@ -80,13 +80,14 @@ function base64urlToBase64(base64url) {
 function restorePadding(s) {
     // The length of the restored string must be a multiple of 4
     let pad = s.length % 4;
+    let padding = "";
     if (pad) {
         if (pad === 1) {
             throw new Error('InvalidLengthError: Input base64url string is the wrong length to determine padding');
         }
-        s += new Array(5 - pad).join('=');
+        s += '===='.slice(0, 4 - pad);
     }
-    return s;
+    return s + padding;
 }
 
 // convert a Unicode string to a string in which
