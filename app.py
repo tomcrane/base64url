@@ -1,9 +1,10 @@
 import base64
 import urllib
 
-from flask import Flask, render_template, request
+from flask import Flask, flash, get_flashed_messages, redirect, url_for, render_template, request
 
 app = Flask(__name__)
+app.secret_key = b'not a secret'
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -21,6 +22,14 @@ def index():
         no_padding = request.form.get("no-padding", None) is not None
 
     iiif_content = request.args.get("iiif-content")
+    if iiif_content is not None:
+        # flash this content to take it off the query string
+        flash(iiif_content)
+        return redirect(url_for('index'))
+
+    messages = get_flashed_messages()
+    if messages:
+        iiif_content = messages[0]
 
     radios = {
         "simple": None,
